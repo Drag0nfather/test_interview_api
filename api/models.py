@@ -12,3 +12,21 @@ class Interview(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class TypeQuestion(models.TextChoices):
+    TEXT = 'Ответ текстом'
+    SINGLE_CHOICE = 'Выбор одного варианта'
+    MULTIPLE_CHOICE = 'Выбор нескольких вариантов'
+
+
+class Question(models.Model):
+    text = models.CharField(max_length=100)
+    type = models.CharField(max_length=50, choices=TypeQuestion.choices)
+    interview = models.ForeignKey(Interview,
+                                  blank=True,
+                                  on_delete=models.CASCADE,
+                                  related_name='questions')
+
+    def __str__(self):
+        return self.text
