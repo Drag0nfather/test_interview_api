@@ -3,20 +3,25 @@ from rest_framework import serializers
 from api.models import Interview, Question, Option
 
 
-class InterviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = ('id', 'name', 'start_date', 'end_date', 'description')
-        model = Interview
-
-
 class QuestionSerializer(serializers.ModelSerializer):
+    interview = serializers.StringRelatedField(read_only=True)
+
     class Meta:
         fields = ('id', 'text', 'type', 'interview')
         model = Question
 
 
 class OptionSerializer(serializers.ModelSerializer):
+    question = serializers.StringRelatedField(read_only=True)
+
     class Meta:
         fields = ('id', 'name', 'question')
         model = Option
 
+
+class InterviewSerializer(serializers.ModelSerializer):
+    questions = QuestionSerializer(read_only=True, many=True)
+
+    class Meta:
+        fields = ('id', 'name', 'start_date', 'end_date', 'description', 'questions')
+        model = Interview
