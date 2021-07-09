@@ -21,7 +21,7 @@ class TypeQuestion(models.TextChoices):
 
 
 class Question(models.Model):
-    text = models.CharField(max_length=100)
+    text = models.CharField(max_length=300)
     type = models.CharField(max_length=50, choices=TypeQuestion.choices)
     interview = models.ForeignKey(Interview,
                                   blank=True,
@@ -30,3 +30,15 @@ class Question(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class Option(models.Model):
+    name = models.CharField(max_length=300)
+    question = models.ForeignKey(Question,
+                                 on_delete=models.CASCADE,
+                                 related_name='options')
+
+    def __str__(self):
+        return self.name
+
+
