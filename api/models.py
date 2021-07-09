@@ -42,3 +42,12 @@ class Option(models.Model):
         return self.name
 
 
+class Answer(models.Model):
+    user_id = models.IntegerField()
+    interview = models.ForeignKey(Interview, on_delete=models.CASCADE, related_name='interview')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='question')
+    option = models.ForeignKey(Option, on_delete=models.CASCADE, null=True, related_name='choice',)
+    option_by_text = models.CharField(max_length=300, null=True)
+
+    def __str__(self):
+        return self.option_by_text
