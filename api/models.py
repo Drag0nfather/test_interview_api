@@ -46,7 +46,7 @@ class Answer(models.Model):
     user_id = models.IntegerField()
     question = models.ForeignKey(Question, on_delete=models.CASCADE,
                                  related_name='question')
-    many_options = models.ManyToManyField(Option, null=True)
+    many_options = models.ManyToManyField(Option)
     one_option = models.ForeignKey(Option, null=True,
                                    on_delete=models.CASCADE,
                                    related_name="one_option")
