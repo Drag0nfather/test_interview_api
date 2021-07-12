@@ -2,7 +2,8 @@ from django.urls import path, include
 from rest_framework.authtoken import views
 from rest_framework.routers import DefaultRouter
 
-from .views import InterviewViewSet, QuestionViewSet, ActiveInterviewViewSet, OptionViewSet
+from .views import InterviewViewSet, QuestionViewSet, \
+    ActiveInterviewViewSet, OptionViewSet, AnswerViewSet
 
 router = DefaultRouter()
 
@@ -12,6 +13,9 @@ router.register('active_interviews', ActiveInterviewViewSet)
 router.register(
     'interviews/(?P<id>\d+)/questions/(?P<question_pk>\d+)/options',
     OptionViewSet)
+router.register(
+    'interviews/(?P<id>\d+)/questions/(?P<question_pk>\d+)/answers',
+    AnswerViewSet)
 
 
 urlpatterns = [
