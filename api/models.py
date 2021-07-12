@@ -44,10 +44,13 @@ class Option(models.Model):
 
 class Answer(models.Model):
     user_id = models.IntegerField()
-    interview = models.ForeignKey(Interview, on_delete=models.CASCADE, related_name='interview')
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='question')
-    option = models.ForeignKey(Option, on_delete=models.CASCADE, null=True, related_name='choice',)
-    option_by_text = models.CharField(max_length=300, null=True)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE,
+                                 related_name='question')
+    many_options = models.ManyToManyField(Option, null=True)
+    one_option = models.ForeignKey(Option, null=True,
+                                   on_delete=models.CASCADE,
+                                   related_name="one_option")
+    text = models.TextField(null=True)
 
     def __str__(self):
-        return self.option_by_text
+        return self.text
