@@ -32,25 +32,12 @@ class Question(models.Model):
         return self.text
 
 
-class Option(models.Model):
-    name = models.CharField(max_length=300)
-    question = models.ForeignKey(Question,
-                                 on_delete=models.CASCADE,
-                                 related_name='options')
-
-    def __str__(self):
-        return self.name
-
-
 class Answer(models.Model):
     user_id = models.IntegerField()
     question = models.ForeignKey(Question, on_delete=models.CASCADE,
                                  related_name='question')
-    many_options = models.ManyToManyField(Option)
-    one_option = models.ForeignKey(Option, null=True,
-                                   on_delete=models.CASCADE,
-                                   related_name="one_option")
-    text = models.TextField(null=True)
+    interview = models.ForeignKey(Interview, on_delete=models.CASCADE, related_name='interview', blank=True, null=True)
+    answer_data = models.CharField(max_length=300)
 
     def __str__(self):
-        return self.text
+        return self.answer_data
