@@ -1,6 +1,8 @@
+from typing import Dict
+
 from rest_framework import serializers
 
-from api.models import Interview, Question, Option, Answer
+from api.models import Interview, Question, Answer
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -11,14 +13,6 @@ class QuestionSerializer(serializers.ModelSerializer):
         model = Question
 
 
-class OptionSerializer(serializers.ModelSerializer):
-    question = serializers.StringRelatedField(read_only=True)
-
-    class Meta:
-        fields = ('id', 'name', 'question')
-        model = Option
-
-
 class InterviewSerializer(serializers.ModelSerializer):
     questions = QuestionSerializer(read_only=True, many=True)
 
@@ -27,8 +21,18 @@ class InterviewSerializer(serializers.ModelSerializer):
         model = Interview
 
 
-class AnswerSerializer(serializers.ModelSerializer):
+class AnswerSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField()
+    interview_id = serializers.IntegerField()
+    question_id = serializers.IntegerField()
+    answer_data = serializers.CharField()
+
+    def create(self, data: Dict):
+        return Answer.objects.create(**data)
+
+
+class UserAnswerSerializer(serializers.ModelSerializer):
 
     class Meta:
-        fields = ('user_id', 'interview', 'question', 'option', 'choice_text')
+        fields = ('question_id', 'answer_data')
         model = Answer
