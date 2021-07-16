@@ -1,11 +1,12 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
-from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
-from .filters import actual_interviews
-from .models import Interview, Question, Option
+from .filters import get_actual_interviews
+from .models import Interview, Question, Answer
 from .permissions import IsAdminOrReadOnly
-from .serializers import InterviewSerializer, QuestionSerializer, OptionSerializer
+from .serializers import InterviewSerializer, QuestionSerializer, AnswerSerializer, UserAnswerSerializer
 
 
 class InterviewViewSet(viewsets.ModelViewSet):
@@ -29,23 +30,28 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
 
 class ActiveInterviewViewSet(viewsets.ModelViewSet):
-    queryset = actual_interviews()
+    queryset = get_actual_interviews()
     serializer_class = InterviewSerializer
     permission_classes = [AllowAny]
 
 
-class OptionViewSet(viewsets.ModelViewSet):
-    queryset = Option.objects.all()
-    serializer_class = OptionSerializer
-    permission_classes = [IsAdminUser]
+class AnswerViewSet(viewsets.ViewSet):
 
-    def perform_create(self, serializer):
-        question = get_object_or_404(Question,
-                                     pk=self.kwargs.get('question_pk'),
-                                     interview__id=self.kwargs.get('id'))
-        serializer.save(question=question)
+    def create_answer(self, request, interview_id: int, question_id: int) -> Response:
+        answer = request.data
+        answer['interview_id'] = interview_id
+        answer['question_id'] = question_id
+        if Answer.objects.filter(user_id=answer.get('user_id')):
+            return Response(data={'success': 'false'}, status=400)
+        serializer = AnswerSerializer(data=answer)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(data={'success': 'yes'}, status=200)
 
-    def get_queryset(self):
-        question = get_object_or_404(Question,
-                                     id=self.kwargs.get('question_pk'))
-        return question.options.all()
+
+class UserAnswersViewSet(viewsets.ViewSet):
+
+    def get_passed_interviews(self, request, interview_id: int, user_id: int) -> Response:
+        answer = Answer.objects.filter(user_id=user_id, interview_id=interview_id)
+        serializer = UserAnswerSerializer(answer, many=True)
+        return Response(serializer.data)
