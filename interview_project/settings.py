@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-jx210r==irc*vpx+8a=eq(0)f4-t)32)o=tx*c@gn1@6(#agdb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
